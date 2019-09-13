@@ -1,0 +1,12 @@
+management:
+  metrics:
+    export:
+      cloudwatch:
+        namespace: m5
+        batchSize: 20
+
+
+cloud:
+  aws:
+    region:
+      static: us-east-1

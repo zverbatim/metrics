@@ -1,0 +1,53 @@
+buildscript {
+    ext {
+        springBootVersion = '1.5.17.RELEASE'
+    }
+    repositories {
+        mavenLocal()
+        mavenCentral()
+    }
+    dependencies {
+        classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
+    }
+}
+
+apply plugin: 'java'
+apply plugin: 'eclipse'
+apply plugin: 'idea'
+apply plugin: 'org.springframework.boot'
+
+repositories {
+    mavenLocal()
+    mavenCentral()
+}
+
+dependencies {
+    compile("org.springframework.boot:spring-boot-starter-web")
+    compile("org.springframework.boot:spring-boot-starter-actuator")
+    compileOnly('org.springframework.boot:spring-boot-configuration-processor')
+
+    // Dependencies necessary for Micrometer & Spring Boot 1.5 integration
+    // Metrics:
+    compile "org.springframework.cloud:spring-cloud-aws-context:1.2.3.RELEASE" // The latest compatible with Boot 1.5
+    compile "org.springframework.boot:spring-boot-autoconfigure:1.5.7.RELEASE" // for annotations used in CloudWatchExportAutoConfiguration
+    // AFTER boot 2.x upgrade:
+    // 1) add 'compile "org.springframework.cloud:spring-cloud-aws-autoconfigure:$springCloudVersion"'
+    // 2) Remove *-aws-context and spring-boot-autoconfigure above
+    // 3) delete our own CloudWatchExportAutoConfiguration as this has CloudWatch micrometer registry integration for Spring
+    // see https://stackoverflow.com/a/55844256/204205
+    compile "io.micrometer:micrometer-core:1.2.1"
+    compile "io.micrometer:micrometer-spring-legacy:1.1.4" // for Spring Boot < 2
+    compile "io.micrometer:micrometer-registry-cloudwatch:1.1.4"
+//    compile "org.aspectj:aspectjweaver:1.+"
+//    compile "org.aspectj:aspectjrt:1.+"
+}
+
+springBoot {
+    buildInfo()
+}
+
+
+group = 'com.munteanu'
+version = '1'
+sourceCompatibility = '1.8'
+
